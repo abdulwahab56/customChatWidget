@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chat</title>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script src="amazon-connect-chat-interface.js"></script>
+    <script src="ACChat.js"></script>
+    <script>
+        AmazonCustomChatWidget.ChatInterface.init({
+            containerId: 'root',
+            initiationIcon: 'icon', // Set either 'icon' or 'button'
+            region: "us-east-1",
+            name: "customerName", // **** Mandatory**** For chat without form, please add a constant or a variable. Otherwise, if you have a chat form, then you can refer it to the input fields like "refer|inputFields|Name"
+            username: "refer|inputFields|UserName", // **** Mandatory**** For chat without form, please add a constant or a variable. Otherwise, if you have a chat form, then you can refer it to the input fields like "refer|inputFields|UserName"
+            apiGateway: "https://me2xxbce4l.execute-api.us-east-1.amazonaws.com/Prod/startChat", // **** Mandatory Provide the api gateway ARN from installing the async chat cloudformation as explained in the readme document.
+            contactFlowId: 'f98e6f50-9bac-41b9-9117-1df06b8b3300', // This is the contact flow ID and not the full ARN of that contact Flow, please check README.md for more information.
+            instanceId: '84ecefa9-184a-400f-babf-3288d7c8fd04', // This is the connect instance ID and not the full ARN of that contact Flow, please check README.md for more information.
+            attachments: true,
+            contactAttr: {}, // Removed initialMessage, will be set dynamically
+            // Set optional chat duration: https://docs.aws.amazon.com/connect/latest/APIReference/API_StartChatContact.html#connect-StartChatContact-request-ChatDurationInMinutes
+            chatDurationInMinutes: 1500, // min 60, max 10080 - default 1500 (25 hours)
+            preChatForm: {
+                visible: true,
+                inputFields: [{
+                    name: "Name",
+                    validation: "required"
+                }, {
+                    name: "UserName",
+                    validation: "required"
+                }, {
+                    name: "Email",
+                    validation: "notrequired"
+                }]
+            },
+            primaryColor: 'rgb(2, 64, 18)',
+            description: 'Ruff Greens Help Desk'
+        });
+    </script>
+</body>
+
+</html>
