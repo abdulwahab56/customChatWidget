@@ -10,6 +10,9 @@ import {
   InputField,
   HelpText,
   SignInButton,
+  RadioInput,
+  RequiredMark,
+  InputLabel,
 } from "./styled";
 
 const name = "SignInForm";
@@ -41,19 +44,43 @@ const SignInForm = ({ setData, setCurrentState }) => {
     <SignInContainer>
       <SignInTitle>Sign in</SignInTitle>
       <OptionContainer>
-        <OptionButton active={signInMethod === "email"} onClick={() => setSignInMethod("email")}>
+        <OptionButton active={signInMethod === "email"}>
+          <RadioInput
+            type="radio"
+            name="signInMethod"
+            value="email"
+            checked={signInMethod === "email"}
+            onChange={() => setSignInMethod("email")}
+          />
           <span>Email</span>
         </OptionButton>
-        <OptionButton active={signInMethod === "sms"} onClick={() => setSignInMethod("sms")}>
+
+        <OptionButton active={signInMethod === "sms"}>
+          <RadioInput
+            type="radio"
+            name="signInMethod"
+            value="sms"
+            checked={signInMethod === "sms"}
+            onChange={() => setSignInMethod("sms")}
+          />
           <span>SMS</span>
         </OptionButton>
       </OptionContainer>
+      <InputLabel htmlFor="signInInput">
+        {signInMethod === "email" ? "Your email" : "Your phone number"}
+        <RequiredMark>*</RequiredMark>
+      </InputLabel>
+
       <InputField
+        id="signInInput"
         type={signInMethod === "email" ? "email" : "tel"}
-        placeholder={signInMethod === "email" ? "Your email*" : "Your phone number*"}
+        placeholder={
+          signInMethod === "email" ? "Your email*" : "Your phone number*"
+        }
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
       />
+
       <HelpText>Can't sign in? Send us a message</HelpText>
       <SignInButton onClick={handleSignIn}>Sign In</SignInButton>
     </SignInContainer>

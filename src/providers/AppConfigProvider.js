@@ -17,7 +17,7 @@ export const AppConfigProvider = ({ children, config }) => {
     const initiationIcon = config.initiationIcon ? config.initiationIcon : chatInitiationIcon.ICON;
     const region = config.region ? config.region : '';
     const name = config.name ? config.name : chatWidgetDefaults.NAME;
-    const username = config.username? config.username : chatWidgetDefaults.USERNAME;
+    const username = config.username? config.username : chatWidgetDefaults.USER_NAME;
     const apiGateway = config.apiGateway ? config.apiGateway : '';
     const contactFlowId = config.contactFlowId ? config.contactFlowId : '';
     const instanceId = config.instanceId ? config.instanceId : '';
