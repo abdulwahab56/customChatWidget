@@ -26,7 +26,7 @@
 // const name = loggerNames.containers.CHAT_FORM;
 // const { log } = genLogger(name);
 
-// const ChatForm = ({ setData, setCurrentState }) => { 
+// const ChatForm = ({ setData, setCurrentState }) => {
 //   log(">>> Init");
 //   const {
 //     primaryColor,
@@ -77,19 +77,19 @@
 //             </OptionButton>
 //           ))}
 //         </OptionList>
-//         <SubmitButton 
+//         <SubmitButton
 //         type="button"
 //         onClick={() => startChatDirectly("Track and manage my orders")}>
 //           <div className="trackmessage-chat">
 //             <span>
 //               Track and manage my orders
 //             </span>
-//             <span><FaGreaterThan /></span> 
+//             <span><FaGreaterThan /></span>
 //           </div>
-          
+
 //         </SubmitButton>
-//         <SubmitButton 
-//         type="button" 
+//         <SubmitButton
+//         type="button"
 //         onClick={() => startChatDirectly("Leave a message")}
 //         largeIcon={true}
 //         >
@@ -98,7 +98,7 @@
 //                 <span className="leaveMessage-subheadingclr">Leave a message</span>
 //             </div>
 //             <GrSend/>
-          
+
 //         </SubmitButton>
 //       </OptionsContainer>
 //     </FormSection>
@@ -106,9 +106,6 @@
 // };
 
 // export default ChatForm;
-
-
-
 
 import React, { createRef, useRef, useState, useContext } from "react";
 import { useAppConfig } from "../../providers/AppConfigProvider";
@@ -118,7 +115,7 @@ import {
   loggerNames,
   inputFieldValidations,
 } from "../../constants";
-import SignInForm from "../../components/SignInForm"
+import SignInForm from "../../components/SignInForm";
 import InputField from "../../components/InputField";
 import {
   FormSection,
@@ -215,7 +212,9 @@ const ChatForm = ({ setData, setCurrentState }) => {
           >
             <div className="trackmessage-chat">
               <span>Track and manage my orders</span>
-              <span><FaGreaterThan /></span>
+              <span>
+                <FaGreaterThan />
+              </span>
             </div>
           </SubmitButton>
           <SubmitButton
@@ -225,14 +224,16 @@ const ChatForm = ({ setData, setCurrentState }) => {
           >
             <div className="leaveMsessage-chat">
               <span>Ruff Greens Help Desk</span>
-              <span className="leaveMessage-subheadingclr">Leave a message</span>
+              <span className="leaveMessage-subheadingclr">
+                Leave a message
+              </span>
             </div>
             <GrSend />
           </SubmitButton>
         </OptionsContainer>
       ) : (
         // Sign-in form UI based on the screenshot
-       <SignInForm setData={setData} setCurrentState={setCurrentState} />
+        <SignInForm setData={setData} setCurrentState={setCurrentState} />
       )}
     </FormSection>
   );
