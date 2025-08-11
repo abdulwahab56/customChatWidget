@@ -95,12 +95,14 @@ const ChatWidget = ({
         if (flexContainer) {
           const targetDiv = flexContainer.querySelector("div:first-child");
           if (targetDiv) {
-                if (originalDisplay === null) {
-                    // Save whatever style it had initially
-                    originalDisplay = targetDiv.style.display || window.getComputedStyle(targetDiv).display;
-                }
-                targetDiv.style.display = "none";
+            if (originalDisplay === null) {
+              // Save whatever style it had initially
+              originalDisplay =
+                targetDiv.style.display ||
+                window.getComputedStyle(targetDiv).display;
             }
+            targetDiv.style.display = "none";
+          }
         }
       }
     }
@@ -115,8 +117,8 @@ const ChatWidget = ({
         if (flexContainer) {
           const targetDiv = flexContainer.querySelector("div:first-child");
           if (targetDiv && originalDisplay !== null) {
-                targetDiv.style.display = originalDisplay; // Restore original style
-            }
+            targetDiv.style.display = originalDisplay; // Restore original style
+          }
         }
       }
     }
