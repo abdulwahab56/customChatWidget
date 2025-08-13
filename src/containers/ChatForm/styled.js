@@ -8,7 +8,7 @@ export const FormSection = styled.div`
   bottom: 80px;
   right: 30px;
   @media ${props => props.device.laptop} {
-    width: 420px;
+    width: 380px;
     bottom: 100px;
     right: 80px;
     height: 420px;

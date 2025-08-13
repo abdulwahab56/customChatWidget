@@ -82,70 +82,147 @@ const ChatWidget = ({
       if (Object.keys(dataFromInputForm).length !== 0) setToggleToForm(true);
     });
 
-    const widgetDiv = document.getElementById("chat-widget");
-    if (!widgetDiv) return;
-    let originalDisplay = null;
-    // Hide it by default
-    function hideTarget() {
-      const textArea = widgetDiv.querySelector(
-        '[data-testid="customer-chat-attachment-icon"]'
-      );
-      if (textArea) {
-        const flexContainer = textArea.closest("div.sc-elJkPf");
-        if (flexContainer) {
-          const targetDiv = flexContainer.querySelector("div:first-child");
-          if (targetDiv) {
-            if (originalDisplay === null) {
-              // Save whatever style it had initially
-              originalDisplay =
-                targetDiv.style.display ||
-                window.getComputedStyle(targetDiv).display;
-            }
-            targetDiv.style.display = "none";
+  //   const widgetDiv = document.getElementById("chat-widget");
+  //   if (!widgetDiv) return;
+  //   let originalDisplay = null;
+  //   // Hide it by default
+  //   function hideTarget() {
+  //     const textArea = widgetDiv.querySelector(
+  //       '[data-testid="customer-chat-attachment-icon"]'
+  //     );
+  //     if (textArea) {
+  //       const flexContainer = textArea.closest("div.sc-elJkPf");
+  //       if (flexContainer) {
+  //         const targetDiv = flexContainer.querySelector("div:first-child");
+  //         if (targetDiv) {
+  //           if (originalDisplay === null) {
+  //             // Save whatever style it had initially
+  //             originalDisplay =
+  //               targetDiv.style.display ||
+  //               window.getComputedStyle(targetDiv).display;
+  //           }
+  //           targetDiv.style.display = "none";
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   // Show it when message appears
+  //   function showTarget() {
+  //     const textArea = widgetDiv.querySelector(
+  //       '[data-testid="customer-chat-attachment-icon"]'
+  //     );
+  //     if (textArea) {
+  //       const flexContainer = textArea.closest("div.sc-elJkPf");
+  //       if (flexContainer) {
+  //         const targetDiv = flexContainer.querySelector("div:first-child");
+  //         if (targetDiv && originalDisplay !== null) {
+  //           targetDiv.style.display = originalDisplay; // Restore original style
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   // Initial hide
+  //   hideTarget();
+
+  //   // Watch for new chat messages
+  //   const messageObserver = new MutationObserver((mutations) => {
+  //     mutations.forEach((mutation) => {
+  //       mutation.addedNodes.forEach((node) => {
+  //         if (node.nodeType === Node.ELEMENT_NODE) {
+  //           const messageBody = node.querySelector(
+  //             '[data-testid="message-body"]'
+  //           );
+  //           if (
+  //             messageBody &&
+  //             messageBody.textContent.trim() === "No, I need more help"
+  //           ) {
+  //             showTarget();
+  //           }
+  //         }
+  //       });
+  //     });
+  //   });
+
+  //   messageObserver.observe(widgetDiv, { childList: true, subtree: true });
+
+  const widgetDiv = document.getElementById("chat-widget");
+if (!widgetDiv) return;
+
+let originalDisplay = null;
+
+function hideTarget() {
+  const textArea = widgetDiv.querySelector(
+    '[data-testid="customer-chat-attachment-icon"]'
+  );
+  if (textArea) {
+    const flexContainer = textArea.closest("div.sc-elJkPf");
+    if (flexContainer) {
+      const targetDiv = flexContainer.querySelector("div:first-child");
+      if (targetDiv) {
+        if (originalDisplay === null) {
+          originalDisplay =
+            targetDiv.style.display ||
+            window.getComputedStyle(targetDiv).display;
+        }
+        targetDiv.style.display = "none";
+      }
+    }
+  }
+}
+
+function showTarget() {
+  const textArea = widgetDiv.querySelector(
+    '[data-testid="customer-chat-attachment-icon"]'
+  );
+  if (textArea) {
+    const flexContainer = textArea.closest("div.sc-elJkPf");
+    if (flexContainer) {
+      const targetDiv = flexContainer.querySelector("div:first-child");
+      if (targetDiv && originalDisplay !== null) {
+        targetDiv.style.display = originalDisplay;
+      }
+    }
+  }
+}
+
+// Messages that trigger hiding
+const hideMessages = [
+  "What is your Return Policy?",
+  "Ways to Administer Ruff Greens",
+  "What ingredients are in Ruff Greens?",
+  "How much should I give my pet?",
+];
+
+// Watch for new chat messages
+const messageObserver = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    mutation.addedNodes.forEach((node) => {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        const messageBody = node.querySelector(
+          '[data-testid="message-body"]'
+        );
+        if (messageBody) {
+          const msg = messageBody.textContent.trim();
+
+          // Hide if message matches any in hideMessages
+          if (hideMessages.includes(msg)) {
+            hideTarget();
+          }
+
+          // Show for this specific message
+          if (msg === "No, I need more help") {
+            showTarget();
           }
         }
       }
-    }
-
-    // Show it when message appears
-    function showTarget() {
-      const textArea = widgetDiv.querySelector(
-        '[data-testid="customer-chat-attachment-icon"]'
-      );
-      if (textArea) {
-        const flexContainer = textArea.closest("div.sc-elJkPf");
-        if (flexContainer) {
-          const targetDiv = flexContainer.querySelector("div:first-child");
-          if (targetDiv && originalDisplay !== null) {
-            targetDiv.style.display = originalDisplay; // Restore original style
-          }
-        }
-      }
-    }
-
-    // Initial hide
-    hideTarget();
-
-    // Watch for new chat messages
-    const messageObserver = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            const messageBody = node.querySelector(
-              '[data-testid="message-body"]'
-            );
-            if (
-              messageBody &&
-              messageBody.textContent.trim() === "No, I need more help"
-            ) {
-              showTarget();
-            }
-          }
-        });
-      });
     });
+  });
+});
 
-    messageObserver.observe(widgetDiv, { childList: true, subtree: true });
+messageObserver.observe(widgetDiv, { childList: true, subtree: true });
+
   };
 
   const failureHandler = (e) => {
