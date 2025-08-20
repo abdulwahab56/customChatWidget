@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, {keyframes} from "styled-components";
 
 export const SignInContainer = styled.div`
   position: fixed;
@@ -134,9 +134,8 @@ export const SignInButton = styled.button`
 export const HelpText = styled.p`
   font-size: 0.92rem;
   color: #777;
-  margin-top: -6px;
+  margin-top: 65px;
   margin-bottom: 0px;
-  margin-top: 70px;
   text-align: center;
    span {
    color: rgb(2, 64, 18);
@@ -195,6 +194,19 @@ export const CodeInput = styled.input`
     border-radius: 6px;
     border: 1px solid #ccc;
     font-size: 16px;
+`;
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+export const TestMessage = styled.div`
+  color: red;
+  font-size: 14px;
+  margin-top: 6px;
+  animation: ${fadeIn} 0.3s ease forwards;
+  position: absolute;
+  top: 275px;
 `;
 
 export const ExpireText = styled.p`
