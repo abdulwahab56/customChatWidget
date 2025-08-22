@@ -42,14 +42,17 @@ const ChatForm = ({ setData, setCurrentState }) => {
     }));
   };
 
-  const startChatDirectly = (text) => {
-    log("Start chat button clicked with text:", text);
-    setData((prev) => ({
-      ...prev,
-      chatTopic: text,
-    }));
-    setCurrentState(chatWithFormStates.CHAT_WIDGET);
-  };
+  const startChatDirectly = (option) => {
+  log("Start chat button clicked:", option);
+
+  setData((prev) => ({
+    ...prev,
+    chatTopic: option,
+  }));
+  localStorage.setItem("chatTopic", JSON.stringify(option));
+
+  setCurrentState(chatWithFormStates.CHAT_WIDGET);
+};
   const signINOPen = () => {
     setCurrentState(chatWithFormStates.SIGN_IN);
   };
@@ -73,12 +76,19 @@ const ChatForm = ({ setData, setCurrentState }) => {
   // };
 
   // Sample help desk options
-  const helpOptions = [
-    "What is your Return Policy?",
-    "Ways to Administer Ruff Greens",
-    "What ingredients are in Ruff Greens?",
-    "How much should I give my pet?",
-  ];
+  // const helpOptions = [
+  //   "What is your Return Policy?",
+  //   "Ways to Administer Ruff Greens",
+  //   "What ingredients are in Ruff Greens?",
+  //   "How much should I give my pet?",
+  // ];
+ const helpOptions = [
+  { id: 1, text: "What is your Return Policy?", hide: true },
+  { id: 2, text: "Ways to Administer Ruff Greens", hide: true },
+  { id: 3, text: "What ingredients are in Ruff Greens?", hide: true },
+  { id: 4, text: "How much should I give my pet?", hide: true },
+];
+
 
   return (
     <FormSection device={device}>
@@ -88,14 +98,14 @@ const ChatForm = ({ setData, setCurrentState }) => {
       </FormHeader>
       <OptionsContainer>
         <OptionList device={device}>
-          {helpOptions.map((option, index) => (
+          {helpOptions.map((option) => (
             <OptionButton
               className="optionbutton"
-              key={index}
+              key={option.id}
               type="button"
               onClick={() => startChatDirectly(option)}
             >
-              {option} <FaGreaterThan />
+              {option.text} <FaGreaterThan />
             </OptionButton>
           ))}
         </OptionList>

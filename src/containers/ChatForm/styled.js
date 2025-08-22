@@ -72,6 +72,14 @@ export const FormHeader = styled.div`
   }
 `;
 
+export const OptionsContainer = styled.div`
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 10px;
+  gap: 2px; /* spacing between OptionList and buttons */
+`;
+
 export const OptionList = styled.div`
   width: 100%;
    background-color: #ffffff;
@@ -157,10 +165,4 @@ export const SubmitButton = styled.button`
   }
 
 `;
-export const OptionsContainer = styled.div`
-  width: 95%;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 10px;
-  gap: 2px; /* spacing between OptionList and buttons */
-`;
+

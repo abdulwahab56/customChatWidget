@@ -43,7 +43,8 @@ const ChatWidget = ({
     log("dataFromInputForm: ", dataFromInputForm);
 
   // Log chatTopic specifically for debugging
-  const chatTopic = dataFromInputForm.chatTopic || "No topic";
+  // const chatTopic = dataFromInputForm.chatTopic?.chatTopic || "No topic";
+  const { chatTopic } = dataFromInputForm;
   log("Chat topic received:", chatTopic);
 
   window.connect.ChatEvents &&
@@ -62,14 +63,14 @@ const ChatWidget = ({
     log("chatsession", chatSession.contactId);
 
     const contactId = chatSession.contactId;
-
-    const existingContactId = localStorage.getItem("chatContactId");
-  if (!existingContactId && contactId) {
     localStorage.setItem("chatContactId", contactId);
-    log("Saved new contactId:", contactId);
-  } else {
-    log("ContactId already exists in localStorage:", existingContactId);
-  }
+    //   const existingContactId = localStorage.getItem("chatContactId");
+    // if (!existingContactId && contactId) {
+    //   localStorage.setItem("chatContactId", contactId);
+    //   log("Saved new contactId:", contactId);
+    // } else {
+    //   log("ContactId already exists in localStorage:", existingContactId);
+    // }
 
     setLoading(false);
     chatSession.incomingItemDecorator = function (item) {
@@ -94,7 +95,6 @@ const ChatWidget = ({
       trace(data);
       if (Object.keys(dataFromInputForm).length !== 0) setToggleToForm(true);
     });
-
     const widgetDiv = document.getElementById("chat-widget");
     if (!widgetDiv) return;
 
@@ -135,15 +135,6 @@ const ChatWidget = ({
       }
     }
 
-    // Messages that trigger hiding
-    const hideMessages = [
-      "What is your Return Policy?",
-      "Ways to Administer Ruff Greens",
-      "What ingredients are in Ruff Greens?",
-      "How much should I give my pet?",
-    ];
-
-    // Watch for new chat messages
     const messageObserver = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {
@@ -153,15 +144,19 @@ const ChatWidget = ({
             );
             if (messageBody) {
               const msg = messageBody.textContent.trim();
+              const stored = localStorage.getItem("chatTopic");
+              if (!stored) return;
 
-              // Hide if message matches any in hideMessages
-              if (hideMessages.includes(msg)) {
-                hideTarget();
-              }
+              const topic = JSON.parse(stored);
 
-              // Show for this specific message
               if (msg === "No, I need more help") {
                 showTarget();
+
+                // flip hide flag → so it won’t hide again until next option is picked
+                topic.hide = false;
+                localStorage.setItem("chatTopic", JSON.stringify(topic));
+              } else if (topic.hide) {
+                hideTarget();
               }
             }
           }
@@ -170,6 +165,77 @@ const ChatWidget = ({
     });
 
     messageObserver.observe(widgetDiv, { childList: true, subtree: true });
+
+    //   const widgetDiv = document.getElementById("chat-widget");
+    //   if (!widgetDiv) return;
+
+    //   let originalDisplay = null;
+
+    //   function hideTarget() {
+    //     const textArea = widgetDiv.querySelector(
+    //       '[data-testid="customer-chat-attachment-icon"]'
+    //     );
+    //     if (textArea) {
+    //       const flexContainer = textArea.closest("div.sc-elJkPf");
+    //       if (flexContainer) {
+    //         const targetDiv = flexContainer.querySelector("div:first-child");
+    //         if (targetDiv) {
+    //           if (originalDisplay === null) {
+    //             originalDisplay =
+    //               targetDiv.style.display ||
+    //               window.getComputedStyle(targetDiv).display;
+    //           }
+    //           targetDiv.style.display = "none";
+    //         }
+    //       }
+    //     }
+    //   }
+
+    //   function showTarget() {
+    //     const textArea = widgetDiv.querySelector(
+    //       '[data-testid="customer-chat-attachment-icon"]'
+    //     );
+    //     if (textArea) {
+    //       const flexContainer = textArea.closest("div.sc-elJkPf");
+    //       if (flexContainer) {
+    //         const targetDiv = flexContainer.querySelector("div:first-child");
+    //         if (targetDiv && originalDisplay !== null) {
+    //           targetDiv.style.display = originalDisplay;
+    //         }
+    //       }
+    //     }
+    //   }
+
+    //   // Messages that trigger hiding
+    //  const hideIds = [1, 2, 3, 4];
+
+    //   // Watch for new chat messages
+    //   const messageObserver = new MutationObserver((mutations) => {
+    //     mutations.forEach((mutation) => {
+    //       mutation.addedNodes.forEach((node) => {
+    //         if (node.nodeType === Node.ELEMENT_NODE) {
+    //           const messageBody = node.querySelector(
+    //             '[data-testid="message-body"]'
+    //           );
+    //           if (messageBody) {
+    //             const msg = messageBody.textContent.trim();
+
+    //             // Hide if message matches any in hideMessages
+    //             if (hideMessages.includes(msg)) {
+    //               hideTarget();
+    //             }
+
+    //             // Show for this specific message
+    //             if (msg === "No, I need more help") {
+    //               showTarget();
+    //             }
+    //           }
+    //         }
+    //       });
+    //     });
+    //   });
+
+    //   messageObserver.observe(widgetDiv, { childList: true, subtree: true });
   };
 
   const failureHandler = (e) => {
@@ -265,7 +331,7 @@ const ChatWidget = ({
       );
       attrs = { ...attrs, ...dataFromInputForm }; // Includes chatTopic
     }
-    
+
     // Add stored contactId if exists
     const savedContactId = localStorage.getItem("chatContactId");
     if (savedContactId) {
@@ -274,9 +340,12 @@ const ChatWidget = ({
     }
 
     // Dynamically set initialMessage from chatTopic
-    if (chatTopic !== "No topic") {
+    if (chatTopic && chatTopic.text && chatTopic.text !== "No topic") {
+      attrs.initialMessage = chatTopic.text; // Override or set initialMessage
+      log("Setting initialMessage to:", chatTopic.text);
+    }else if(chatTopic && chatTopic !== "No topic"){
       attrs.initialMessage = chatTopic; // Override or set initialMessage
-      log("Setting initialMessage to:", chatTopic);
+      log("Setting initialMessage when no id:", chatTopic);
     }
     if (initialPropertiesContAttrs) {
       log(
@@ -361,7 +430,7 @@ const ChatWidget = ({
       setCurrentState(chatWithFormStates.FORM);
       setToggleToForm(false);
     }
-    if (!chatInitialized) {
+    if (!chatInitialized && widgetIsOpen) {
       initializeChat();
     }
   }, [widgetIsOpen]);
