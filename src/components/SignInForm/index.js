@@ -73,7 +73,7 @@ const SignInForm = ({ setData, setCurrentState }) => {
       }
 
       const data = await response.json();
-
+      log("api data", data);
       log("api data", data.expiryTime);
       if (data.expiryTime) {
         const secondsLeft = Math.floor((data.expiryTime - Date.now()) / 1000);
@@ -84,7 +84,7 @@ const SignInForm = ({ setData, setCurrentState }) => {
       } else if (data.message === "No orders found for this email") {
         setMessage(data.message);
       } else {
-        setOrders(data.orders);
+        setOrders(data);
         setCurrentStep("Orders");
       }
     } catch (error) {
@@ -112,7 +112,7 @@ const SignInForm = ({ setData, setCurrentState }) => {
 
   const handleVerifiy = async (e) => {
     const val = e.target.value.replace(/\D/g, "");
-    console.log("val",val)
+    console.log("val", val);
     if (message) setMessage("");
     setVerificationCode(val);
     if (val.length === 6) {
@@ -275,8 +275,8 @@ const SignInForm = ({ setData, setCurrentState }) => {
             </Label>
             <CodeInput
               type="text"
-              inputMode="numeric" 
-              pattern="[0-9]*" 
+              inputMode="numeric"
+              pattern="[0-9]*"
               maxLength={6}
               value={verificationCode}
               onChange={(e) => handleVerifiy(e)}
@@ -291,7 +291,11 @@ const SignInForm = ({ setData, setCurrentState }) => {
                 : "Code expired. Please resend."}
             </ExpireText>
 
-            <SignInButton primaryColor={primaryColor} onClick={handleResend} disabled={timer > 0}>
+            <SignInButton
+              primaryColor={primaryColor}
+              onClick={handleResend}
+              disabled={timer > 0}
+            >
               Resend Code
             </SignInButton>
           </VerificationContainer>

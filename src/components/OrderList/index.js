@@ -5,7 +5,6 @@ import {
   OrderCard,
   OrderHeader,
   OrderId,
-  OrderPrice,
   Shipment,
   CancelledTag,
   ProductWrapper,
@@ -13,31 +12,65 @@ import {
   ProductInfo,
   ProductTitle,
   ProductPrice,
+  ReportButton,
+  TestSummary,
+  CustomerName,
+  ScrollContainer,
+  Payment,
+  PaymentDetail,
+  PaymentInfor
 } from "./styled";
 import { FaAngleLeft } from "react-icons/fa6";
 import { LuClock } from "react-icons/lu";
+const ProductItem = ({ product, orderAmount }) => (
+  <ProductWrapper key={product.id || product.title}>
+    <ProductImage src={product.image?.url} alt={product.title} />
+    <ProductInfo>
+      <ProductTitle>{product.title}</ProductTitle>
+      <ProductPrice>
+        ${orderAmount} × {product.quantity}
+      </ProductPrice>
+    </ProductInfo>
+  </ProductWrapper>
+);
 
-const OrderList = ({ orders, sortBy = "date" }) => {
-  // Sort orders
-  const sortedOrders = [...orders].sort((a, b) => {
-    if (sortBy === "date") {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    }
-    if (sortBy === "price") {
-      return (
-        parseFloat(b.totalPriceSet.shopMoney.amount) -
-        parseFloat(a.totalPriceSet.shopMoney.amount)
-      );
-    }
-    return 0;
-  });
+const OrderItem = ({ order, reportHandler }) => (
+  <OrderCard>
+    <OrderHeader>
+      <OrderId>Order {order.name}</OrderId>
+    </OrderHeader>
+    <TestSummary>Summary</TestSummary>
+    <Shipment>
+      Shipment
+      {order.displayFulfillmentStatus === "UNFULFILLED" && (
+        <CancelledTag>Cancelled</CancelledTag>
+      )}
+    </Shipment>
+    <ReportButton onClick={reportHandler}>Report issue</ReportButton>
+    {order.lineItems?.edges?.map(({ node }) => (
+      <ProductItem
+        key={node.id || node.title}
+        product={node}
+        orderAmount={order.totalPriceSet?.shopMoney?.amount}
+      />
+    ))}
+  </OrderCard>
+);
+
+const OrderList = ({ orders, setCurrentStep, reportHandler }) => {
+  const orderList = orders?.orders || [];
+  const country = orderList[0]?.shippingAddress?.country;
+  const subtotal = orderList[0]?.subtotalPriceSet?.shopMoney.amount;
+  const refunded = orderList[0]?.totalRefundedSet?.shopMoney.amount;
+  const shipping = orderList[0]?.totalShippingPriceSet?.shopMoney.amount;
+  const total = orderList[0]?.totalPriceSet?.shopMoney.amount;
 
   return (
     <>
       <HeaderWrapper>
         <FaAngleLeft
           onClick={() => setCurrentStep("SIGN_IN")}
-          style={{ cursor: "pointer" }}
+          className="cursor-pointer"
         />
         <OfflineNotice>
           Ruff Greens Help Desk <br />
@@ -46,36 +79,46 @@ const OrderList = ({ orders, sortBy = "date" }) => {
           </span>
         </OfflineNotice>
       </HeaderWrapper>
-      {sortedOrders.map((order) => (
-        <OrderCard key={order.id}>
-          <OrderHeader>
-            <OrderId>Order {order.name}</OrderId>
-            <OrderPrice>
-              ${order.totalPriceSet.shopMoney.amount}{" "}
-              {order.totalPriceSet.shopMoney.currencyCode}
-            </OrderPrice>
-          </OrderHeader>
 
-          <Shipment>
-            Shipment
-            {order.displayFulfillmentStatus === "CANCELLED" && (
-              <CancelledTag>Cancelled</CancelledTag>
-            )}
-          </Shipment>
+      <ScrollContainer>
+        {orderList.length === 0 ? (
+          <p>No orders found</p>
+        ) : (
+          orderList.map((order) => (
+            <OrderItem
+              key={order.id}
+              order={order}
+              reportHandler={reportHandler}
+            />
+          ))
+        )}
 
-          {order.lineItems.edges.map(({ node }) => (
-            <ProductWrapper key={node.title}>
-              <ProductImage src={node.image?.url} alt={node.title} />
-              <ProductInfo>
-                <ProductTitle>{node.title}</ProductTitle>
-                <ProductPrice>
-                  ${order.totalPriceSet.shopMoney.amount} x {node.quantity}
-                </ProductPrice>
-              </ProductInfo>
-            </ProductWrapper>
-          ))}
-        </OrderCard>
-      ))}
+        <hr />
+        <TestSummary>Shipping information</TestSummary>
+        <CustomerName>{orders?.customer?.name}</CustomerName>
+        <CustomerName>{country}</CustomerName>
+        <hr />
+        <TestSummary>Billing information</TestSummary>
+        <CustomerName>{orders?.customer?.name}</CustomerName>
+        <CustomerName>{country}</CustomerName>
+        <hr />
+        <TestSummary>Payment</TestSummary>
+        <PaymentInfor>
+        <Payment>
+          <PaymentDetail>Subtotal (Inc.tax)</PaymentDetail>
+          <PaymentDetail>Refunded</PaymentDetail>
+          <PaymentDetail>Shipping</PaymentDetail>
+          <PaymentDetail>Total</PaymentDetail>
+        </Payment>
+        <Payment>
+          <PaymentDetail>${subtotal}</PaymentDetail>
+          <PaymentDetail>${refunded}</PaymentDetail>
+          <PaymentDetail>${shipping}</PaymentDetail>
+          <PaymentDetail>${total}</PaymentDetail>
+        </Payment> 
+        </PaymentInfor>
+      
+      </ScrollContainer>
     </>
   );
 };

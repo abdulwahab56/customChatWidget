@@ -39,10 +39,11 @@ const { log } = genLogger(name);
 const OrdersPage = ({ orders, setCurrentStep }) => {
   const { primaryColor } = useAppConfig();
   const [reportButtonToggle, setReportButtonToggle] = useState(false);
-  const [orderList, setOrderList] = useState("ORDER_LIST")
-  if (!Array.isArray(orders) || orders.length === 0) {
-    return <p>No orders found</p>;
-  }
+  const [orderList, setOrderList] = useState("ORDER_LIST");
+
+  const orderListDetail = orders.orders;
+
+  log("orderlistDetail", orderListDetail);
 
   const reportHandler = () => {
     setReportButtonToggle(true);
@@ -89,68 +90,73 @@ const OrdersPage = ({ orders, setCurrentStep }) => {
         <>
           {orderList === "ORDER_LIST" && (
             <>
-             <HeaderWrapper>
-            <FaAngleLeft
-              onClick={() => setCurrentStep("SIGN_IN")}
-              style={{ cursor: "pointer" }}
-            />
-            <OfflineNotice>
-              Ruff Greens Help Desk <br />
-              <span className="back-online">
-                <LuClock /> Back online at 5:00 PM
-              </span>
-            </OfflineNotice>
-          </HeaderWrapper>
-          <PageWrapper onClick={()=> setOrderList("ORDER_DETAIL")}>
-            <SectionTitle>Your orders</SectionTitle>
-            {orders.map((order) => (
-              <OrderCard key={order.id}>
-                <OrderHeader>
-                  <OrderId>Order {order.name}</OrderId>
-                  <OrderPrice>
-                    ${order.totalPriceSet.shopMoney.amount}{" "}
-                    {order.totalPriceSet.shopMoney.currencyCode}
-                  </OrderPrice>
-                </OrderHeader>
+              <HeaderWrapper>
+                <FaAngleLeft
+                  onClick={() => setCurrentStep("SIGN_IN")}
+                  style={{ cursor: "pointer" }}
+                />
+                <OfflineNotice>
+                  Ruff Greens Help Desk <br />
+                  <span className="back-online">
+                    <LuClock /> Back online at 5:00 PM
+                  </span>
+                </OfflineNotice>
+              </HeaderWrapper>
+              <PageWrapper onClick={() => setOrderList("ORDER_DETAIL")}>
+                <SectionTitle>Your orders</SectionTitle>
+                {orderListDetail.map((order) => (
+                  <OrderCard key={order.id}>
+                    <OrderHeader>
+                      <OrderId>Order {order.name}</OrderId>
+                      <OrderPrice>
+                        ${order.totalPriceSet.shopMoney.amount}{" "}
+                        {order.totalPriceSet.shopMoney.currencyCode}
+                      </OrderPrice>
+                    </OrderHeader>
 
-                <Shipment>
-                  Shipment
-                  {order.displayFulfillmentStatus === "CANCELLED" && (
-                    <CancelledTag>Cancelled</CancelledTag>
-                  )}
-                </Shipment>
+                    <Shipment>
+                      Shipment
+                      {order.displayFulfillmentStatus === "CANCELLED" && (
+                        <CancelledTag>Cancelled</CancelledTag>
+                      )}
+                    </Shipment>
 
-                <ReportButton
-                  onClick={() => {
-                    reportHandler();
-                  }}
-                >
-                  Report issue
-                </ReportButton>
+                    <ReportButton
+                      onClick={() => {
+                        reportHandler();
+                      }}
+                    >
+                      Report issue
+                    </ReportButton>
 
-                {order.lineItems.edges.map(({ node }) => (
-                  <ProductWrapper key={node.title}>
-                    <ProductImage src={node.image?.url} alt={node.title} />
-                    <ProductInfo>
-                      <ProductTitle>{node.title}</ProductTitle>
-                      <ProductPrice>
-                        ${order.totalPriceSet.shopMoney.amount} x{" "}
-                        {node.quantity}
-                      </ProductPrice>
-                    </ProductInfo>
-                  </ProductWrapper>
+                    {order.lineItems.edges.map(({ node }) => (
+                      <ProductWrapper key={node.title}>
+                        <ProductImage src={node.image?.url} alt={node.title} />
+                        <ProductInfo>
+                          <ProductTitle>{node.title}</ProductTitle>
+                          <ProductPrice>
+                            ${order.totalPriceSet.shopMoney.amount} x{" "}
+                            {node.quantity}
+                          </ProductPrice>
+                        </ProductInfo>
+                      </ProductWrapper>
+                    ))}
+                  </OrderCard>
                 ))}
-              </OrderCard>
-            ))}
-          </PageWrapper>
-          <Footer>
-            <HelpText>Need more help?</HelpText>
-            <MessageButton>Send Us A Message</MessageButton>
-          </Footer>
+              </PageWrapper>
+              <Footer>
+                <HelpText>Need more help?</HelpText>
+                <MessageButton>Send Us A Message</MessageButton>
+              </Footer>
             </>
-            
           )}
-          {orderList === "ORDER_DETAIL" && (<OrderList orders={orders} />)}
+          {orderList === "ORDER_DETAIL" && (
+            <OrderList
+              orders={orders}
+              setCurrentStep={setCurrentStep}
+              reportHandler={reportHandler}
+            />
+          )}
         </>
       )}
     </SignInContainer>
