@@ -7,6 +7,7 @@ import ChatWithoutForm from "./views/ChatWithoutForm";
 import { AppConfigProvider } from "./providers/AppConfigProvider";
 import { genLogger } from "./lib/logger";
 import { loggerNames } from "./constants";
+import StateChangeProvider from "./providers/StateChangeProvider";
 
 const name = loggerNames.APP;
 const { log } = genLogger(name);
@@ -19,12 +20,15 @@ const App = ({ preChatForm = {}, ...props }) => {
   return (
     <div>
       <AppConfigProvider config={{ ...propsWithPreForm }}>
-        {Object.keys(preChatForm).length === 0 ||
+        <StateChangeProvider>
+           {Object.keys(preChatForm).length === 0 ||
         preChatForm.visible === false ? (
           <ChatWithoutForm />
         ) : (
           <ChatWithForm />
         )}
+        </StateChangeProvider>
+       
       </AppConfigProvider>
     </div>
   );

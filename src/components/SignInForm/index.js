@@ -4,6 +4,7 @@ import { chatWithFormStates, device } from "../../constants";
 import { genLogger } from "../../lib/logger";
 import { FaAngleLeft } from "react-icons/fa6";
 import { LuClock } from "react-icons/lu";
+import { useStateChange } from "../../providers/StateChangeProvider";
 import {
   SignInContainer,
   OfflineNotice,
@@ -37,7 +38,9 @@ const SignInForm = ({ setData, setCurrentState }) => {
   const { primaryColor } = useAppConfig();
   const [signInMethod, setSignInMethod] = useState("email");
   const [inputValue, setInputValue] = useState("");
-  const [currentStep, setCurrentStep] = useState("SIGN_IN"); // SIGN_IN or VERIFY
+
+  const {currentStep, setCurrentStep} = useStateChange()
+  // const [currentStep, setCurrentStep] = useState("SIGN_IN"); // SIGN_IN or VERIFY
   const [message, setMessage] = useState("");
   const [timer, setTimer] = useState(""); // seconds (10 mins)
   const [orders, setOrders] = useState(false);
@@ -85,7 +88,7 @@ const SignInForm = ({ setData, setCurrentState }) => {
         setMessage(data.message);
       } else {
         setOrders(data);
-        setCurrentStep("Orders");
+        setCurrentStep("VERIFY");
       }
     } catch (error) {
       console.error("API call failed:", error);
@@ -131,13 +134,17 @@ const SignInForm = ({ setData, setCurrentState }) => {
 
         const data = await response.json();
 
+
         if (!response.ok) {
           throw new Error(data.error || "Verification failed");
         }
         log("api data", data);
         if (data.verified) {
           // setOrders(data.orders || []); // backend should send orders
-          setCurrentStep("Orders"); // ✅ move to next step
+          setCurrentStep("ORDERS"); // ✅ move to next step
+          localStorage.setItem("token", data.token)
+          setInputValue("");
+          setVerificationCode("")
         } else {
           setMessage("Invalid code. Try again.");
         }
@@ -302,8 +309,8 @@ const SignInForm = ({ setData, setCurrentState }) => {
         </>
       )}
 
-      {currentStep === "Orders" && (
-        <OrdersPage orders={orders} setCurrentStep={setCurrentStep} />
+      {currentStep === "ORDERS" && (
+        <OrdersPage orders={orders}  setCurrentState={setCurrentState} />
       )}
     </SignInContainer>
   );

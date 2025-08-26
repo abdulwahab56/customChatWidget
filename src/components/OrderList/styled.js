@@ -1,7 +1,31 @@
 import styled from "styled-components";
 
-export const HeaderWrapper = styled.div`
+
+export const SignInContainer = styled.div`
+  position: fixed;
+  bottom: 80px;
+  right: 30px;
+  width: 320px;
+  height: 430px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
   background: linear-gradient(rgb(2, 64, 18) 34%, rgba(255, 255, 255, 0.4));
+  box-shadow: rgb(221, 221, 221) 0px 2px 3px;
+  overflow: hidden;
+  z-index: 999;
+
+  @media ${(props) => props.device.laptop} {
+        width: 380px;
+        height: 420px;
+        /* max-width: 350px; */
+        /* max-height: 460px; */
+        bottom: 85px;
+        right: 80px;
+  }
+`;
+
+export const HeaderWrapper = styled.div`
   color: #ebe7e7;
   display: flex;
   align-items: center;
@@ -23,6 +47,17 @@ export const OfflineNotice = styled.div`
     gap: 5px;
   }
 `;
+export const NavBarWrap = styled.div`
+display: flex;
+align-items: center;
+justify-content: space-between;
+background: linear-gradient(rgb(2, 64, 18) 34%, rgba(255, 255, 255, 0.4));
+`
+
+export const LogOutButton = styled.div`
+padding: 15px;
+color: white;
+`
 
 export const ScrollContainer = styled.div`
   max-height: 400px;
@@ -73,7 +108,7 @@ export const Shipment = styled.div`
   margin-bottom: 8px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
 `;
 export const ReportButton = styled.button`
   background: #f5f5f5;
@@ -95,7 +130,7 @@ export const TestSummary = styled.h3`
   color: #161616;
   margin: 0px 0px 20px;
 `;
-export const CustomerName = styled.p`
+export const CustomerName = styled.span`
   font-size: 14px;
   line-height: 24px;
   color: #161616;
@@ -115,6 +150,7 @@ export const ProductWrapper = styled.div`
   display: flex;
   align-items: center;
   margin-top: 12px;
+  gap: 5px
 `;
 
 export const ProductImage = styled.img`
@@ -122,19 +158,22 @@ export const ProductImage = styled.img`
   height: 48px;
   border-radius: 8px;
   margin-right: 12px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  margin: 5px;
 `;
 
 export const ProductInfo = styled.div`
   flex: 1;
-`;
-
-export const ProductTitle = styled.h4`
   font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 4px;
 `;
 
-export const ProductPrice = styled.p`
+export const ProductTitle = styled.div`
+  font-weight: 500;
+  color: #222;
+`;
+
+export const ProductPrice = styled.div`
   font-size: 13px;
   color: #666;
 `;
@@ -149,6 +188,17 @@ export const Payment = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
+    .paymentTotal {
+    font-size: 20px;
+    font-weight: 600;
+  }
 `;
 
 export const PaymentDetail = styled.span``;
+
+
+export const CustomerInfor = styled.div`
+display: flex;
+flex-direction: column;
+gap: 5px;
+`

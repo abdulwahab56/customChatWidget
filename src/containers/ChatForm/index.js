@@ -20,6 +20,7 @@ import { GrSend } from "react-icons/gr";
 import { FaGreaterThan } from "react-icons/fa6";
 import { genLogger } from "../../lib/logger";
 
+import { useStateChange } from "../../providers/StateChangeProvider";
 const name = loggerNames.containers.CHAT_FORM;
 const { log } = genLogger(name);
 
@@ -30,6 +31,7 @@ const ChatForm = ({ setData, setCurrentState }) => {
     description,
     preChatForm: { inputFields },
   } = useAppConfig();
+  const {setCurrentStep} = useStateChange()
   const inputRefs = useRef(inputFields.map((field) => createRef()));
   const [showSignInForm, setShowSignInForm] = useState(false); // New state for sign-in form
   const [signInMethod, setSignInMethod] = useState("email"); // Default to email
@@ -54,8 +56,11 @@ const ChatForm = ({ setData, setCurrentState }) => {
   setCurrentState(chatWithFormStates.CHAT_WIDGET);
 };
   const signINOPen = () => {
-    setCurrentState(chatWithFormStates.SIGN_IN);
-  };
+  const token = localStorage.getItem("token");
+  setCurrentState(chatWithFormStates.SIGN_IN);
+
+  }
+
 
   // Handle sign-in form submission
   // const handleSignIn = () => {

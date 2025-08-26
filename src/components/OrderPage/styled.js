@@ -9,7 +9,7 @@ export const SignInContainer = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 10px;
-  background: linear-gradient(rgb(2, 64, 18) 34%, rgba(255, 255, 255, 0.4));
+  background: linear-gradient(rgb(2, 64, 18) 34%, rgba(255, 255, 255, 0.4));8
   box-shadow: rgb(221, 221, 221) 0px 2px 3px;
   overflow: hidden;
   z-index: 999;
@@ -24,8 +24,19 @@ export const SignInContainer = styled.div`
   }
 `;
 
+export const NavBarWrap = styled.div`
+display: flex;
+align-items: center;
+justify-content: space-between;
+background: linear-gradient(rgb(2, 64, 18) 34%, rgba(255, 255, 255, 0.4));
+`
+
+export const LogOutButton = styled.div`
+padding: 15px;
+color: white;
+`
+
 export const HeaderWrapper = styled.div`
-  background: linear-gradient(rgb(2, 64, 18) 34%, rgba(255, 255, 255, 0.4));
   color: #ebe7e7;
   display: flex;
   align-items: center;
@@ -101,6 +112,10 @@ export const PageWrapper = styled.div`
   background: #ffff;
   position: relative;
   height: 100%;
+  overflow-y: auto;
+  flex: 1;
+  padding-bottom: 60px;
+  cursor: pointer;
 `;
 
 export const SectionTitle = styled.h3`
@@ -130,10 +145,12 @@ export const OrderPrice = styled.span`
   color: #111;
 `;
 
-export const Shipment = styled.p`
+export const Shipment = styled.div`
   font-size: 14px;
   color: #555;
-  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 export const CancelledTag = styled.span`
@@ -142,7 +159,7 @@ export const CancelledTag = styled.span`
   padding: 4px 10px;
   font-size: 12px;
   font-weight: 600;
-  border-radius: 20px;
+  border-radius: 5px;
   margin-left: 8px;
 `;
 
@@ -171,6 +188,10 @@ export const ProductImage = styled.img`
   height: 60px;
   border-radius: 8px;
   object-fit: cover;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  margin: 5px;
+
 `;
 
 export const ProductInfo = styled.div`
@@ -188,7 +209,7 @@ export const ProductPrice = styled.div`
 
 export const Footer = styled.div`
   position: fixed;
-  bottom: 86px;
+  bottom: 85px;
   right: 80px;
   background-color: rgb(255, 255, 255);
   box-shadow: rgba(0, 0, 0, 0.09) 0px -4px 4px, rgba(0, 0, 0, 0.1) 0px 1px 2px, rgba(0, 0, 0, 0.16) 0px 1px 3px;
