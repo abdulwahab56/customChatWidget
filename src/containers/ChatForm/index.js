@@ -57,36 +57,19 @@ const ChatForm = ({ setData, setCurrentState }) => {
 };
   const signINOPen = () => {
   const token = localStorage.getItem("token");
-  setCurrentState(chatWithFormStates.SIGN_IN);
+  log("click signin button")
+  if(token){
+    log("click signin button token")
+    // setCurrentStep("ORDERS")
+    setCurrentState(chatWithFormStates.ORDERS);
+  }else{
+    // setCurrentStep("SIGN_IN")
+    setCurrentState(chatWithFormStates.SIGN_IN);
+  }
+  
 
   }
 
-
-  // Handle sign-in form submission
-  // const handleSignIn = () => {
-  //   if (signInMethod === "email" && !inputValue.includes("@")) {
-  //     log("Invalid email format");
-  //     return; // Basic validation
-  //   } else if (signInMethod === "sms" && !/^\+?\d{10,}$/.test(inputValue)) {
-  //     log("Invalid phone number format");
-  //     return; // Basic validation
-  //   }
-  //   log("Sign in with:", signInMethod, inputValue);
-  //   setData((prev) => ({
-  //     ...prev,
-  //     signInMethod,
-  //     signInValue: inputValue,
-  //   }));
-  //   setCurrentState(chatWithFormStates.CHAT_WIDGET); // Proceed to chat after sign-in
-  // };
-
-  // Sample help desk options
-  // const helpOptions = [
-  //   "What is your Return Policy?",
-  //   "Ways to Administer Ruff Greens",
-  //   "What ingredients are in Ruff Greens?",
-  //   "How much should I give my pet?",
-  // ];
  const helpOptions = [
   { id: 1, text: "What is your Return Policy?", hide: true },
   { id: 2, text: "Ways to Administer Ruff Greens", hide: true },

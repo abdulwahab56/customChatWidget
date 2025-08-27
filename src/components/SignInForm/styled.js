@@ -121,8 +121,8 @@ export const InputField = styled.input`
 export const SignInButton = styled.button`
   width: 100%;
   padding: 10px 0;
-  background-color: ${(props) => props.primaryColor || "#3F5773"};
-  color: white;
+ background-color: ${(props) =>props.disabled ? "#ccc" : props.primaryColor}; 
+  color: ${(props) => (props.disabled ? "#666" : "#fff")};
   font-weight: bold;
   border: none;
   border-radius: 5px;
@@ -216,8 +216,8 @@ export const ExpireText = styled.p`
 `;
 
 export const ResendButton = styled.button`
-  background: transparent;
-  color: ${props => props.primaryColor || "#0a7cff"};
+  background-color: ${(props) =>props.disabled ? "#ccc" : props.primaryColor}; 
+  color: ${(props) => (props.disabled ? "#666" : "#fff")};
   font-size: 14px;
   font-weight: 500;
   border: none;
@@ -227,6 +227,21 @@ export const ResendButton = styled.button`
 
   &:hover {
     text-decoration: underline;
+    background-color: ${(props) =>
+      props.disabled ? "#ccc" : "#006633"}; /* darker only if enabled */
   }
 `;
 
+const spin = keyframes`
+  to { transform: rotate(360deg); }
+`;
+
+export const Spinner = styled.div`
+  width: 12px;
+  height: 12px;
+  border: 1px solid #fff;
+  border-top: 1px solid transparent;
+  border-radius: 50%;
+  animation: ${spin} 0.7s linear infinite;
+  display: inline-block;
+`;

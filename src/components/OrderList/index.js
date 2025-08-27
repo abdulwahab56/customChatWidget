@@ -65,7 +65,7 @@ const OrderItem = ({ order, reportHandler }) => (
 );
 
 const OrderList = ({ orders, reportHandler, logoutHandler, goBack }) => {
-  const orderList = orders?.orders || [];
+  const orderList = orders;
   const country = orderList[0]?.shippingAddress?.country || "";
   const subtotal = orderList[0]?.subtotalPriceSet?.shopMoney?.amount || 0;
   const refunded = orderList[0]?.totalRefundedSet?.shopMoney?.amount || 0;

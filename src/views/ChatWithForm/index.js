@@ -17,6 +17,7 @@ import {
 import { CSSTransition } from "react-transition-group";
 import { Main } from "./styled";
 import { genLogger } from "../../lib/logger";
+import OrdersPage from "../../components/OrderPage";
 
 const name = loggerNames.views.CHAT_WITH_FORM;
 const { log } = genLogger(name);
@@ -64,7 +65,9 @@ const ChatWithForm = () => {
             <ChatForm setData={setData} setCurrentState={setCurrentState} />
           ) : currentState === chatWithFormStates.SIGN_IN ? (
             <SignInForm setData={setData} setCurrentState={setCurrentState} />
-          ) : (
+          ) : currentState === chatWithFormStates.ORDERS ? (
+          <OrdersPage  setCurrentState={setCurrentState}/>
+        ) :(
             <ChatWidget
               dataFromInputForm={data}
               setCurrentState={setCurrentState}

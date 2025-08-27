@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled,  { keyframes } from "styled-components";
 
 export const SignInContainer = styled.div`
   position: fixed;
@@ -9,7 +9,7 @@ export const SignInContainer = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 10px;
-  background: linear-gradient(rgb(2, 64, 18) 34%, rgba(255, 255, 255, 0.4));8
+  background: linear-gradient(rgb(2, 64, 18) 34%, rgba(255, 255, 255, 0.4));
   box-shadow: rgb(221, 221, 221) 0px 2px 3px;
   overflow: hidden;
   z-index: 999;
@@ -244,4 +244,19 @@ export const MessageButton = styled.button`
   &:hover {
     background: #006633;
   }
+`;
+
+const spin = keyframes`
+  to { transform: rotate(360deg); }
+`;
+
+export const Spinner = styled.div`
+border: 4px solid rgba(0, 0, 0, 0.1); 
+border-top: 4px solid #3498db;
+border-radius: 50%; 
+width: 50px;
+height: 50px;
+animation: ${spin} 0.7s linear infinite;
+margin-top: 65px;
+margin-left: 130px;
 `;

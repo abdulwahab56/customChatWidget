@@ -50,6 +50,7 @@ export const chatWithFormStates = {
   FORM: "form",
   SIGN_IN: "sign_in",
   CHAT_WIDGET: "chat",
+  ORDERS: "ORDERS",
 };
 
 export const chatWithoutFormStates = {

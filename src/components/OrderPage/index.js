@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAppConfig } from "../../providers/AppConfigProvider";
 import { chatWithFormStates, device } from "../../constants";
 import { genLogger } from "../../lib/logger";
@@ -33,18 +33,52 @@ import {
   Footer,
   HelpText,
   MessageButton,
-  LogOutButton, // styled component
+  LogOutButton, 
+  Spinner
+  // styled component
 } from "./styled";
 
 const { log } = genLogger("OrderPage");
 
-const OrdersPage = ({ orders, setCurrentState }) => {
+const OrdersPage = ({ setCurrentState }) => {
   const { primaryColor } = useAppConfig();
   const { setCurrentStep } = useStateChange();
   const [reportButtonToggle, setReportButtonToggle] = useState(false);
   const [orderList, setOrderList] = useState("ORDER_LIST");
+  const [orderListDetail, setOrderListDetail] = useState([]);
+  const [loading, setLoding] = useState(false);
 
-  const orderListDetail = orders?.orders || [];
+  useEffect(() => {
+    const fetchOrderDetail = async () => {
+      setLoding(true)
+      try {
+        // const email = localStorage.getItem("email");
+        const url =
+          "https://b0g5qyg9y1.execute-api.us-east-1.amazonaws.com/dev/orderDetails";
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            email: localStorage.getItem("email"),
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setOrderListDetail(data?.orders || []);
+        setLoding(false)
+        log("orderdeatil list", data?.orders || []);
+      } catch (error) {
+        console.error("API call failed:", error);
+      }
+    };
+    fetchOrderDetail();
+  }, []);
 
   const reportHandler = () => setReportButtonToggle(true);
 
@@ -105,7 +139,7 @@ const OrdersPage = ({ orders, setCurrentState }) => {
               <NavBarWrap>
                 <HeaderWrapper>
                   <FaAngleLeft
-                    onClick={() => setReportButtonToggle(false)}
+                    onClick={() => setCurrentState(chatWithFormStates.FORM)}
                     style={{ cursor: "pointer" }}
                   />
                   <OfflineNotice>
@@ -122,6 +156,7 @@ const OrdersPage = ({ orders, setCurrentState }) => {
 
               <PageWrapper onClick={() => setOrderList("ORDER_DETAIL")}>
                 <SectionTitle>Your orders</SectionTitle>
+                {loading ? <Spinner/>: <>
                 {orderListDetail.map((order) => (
                   <OrderCard key={order.id}>
                     <OrderHeader>
@@ -165,6 +200,8 @@ const OrdersPage = ({ orders, setCurrentState }) => {
                     ))}
                   </OrderCard>
                 ))}
+                </>}
+                
               </PageWrapper>
 
               <Footer>
@@ -176,7 +213,7 @@ const OrdersPage = ({ orders, setCurrentState }) => {
 
           {orderList === "ORDER_DETAIL" && (
             <OrderList
-              orders={orders}
+              orders={orderListDetail}
               reportHandler={reportHandler}
               logoutHandler={logoutHandler}
               goBack={() => setOrderList("ORDER_LIST")}

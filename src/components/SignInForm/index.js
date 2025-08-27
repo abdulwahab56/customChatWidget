@@ -5,6 +5,7 @@ import { genLogger } from "../../lib/logger";
 import { FaAngleLeft } from "react-icons/fa6";
 import { LuClock } from "react-icons/lu";
 import { useStateChange } from "../../providers/StateChangeProvider";
+import "react-toastify/dist/ReactToastify.css";
 import {
   SignInContainer,
   OfflineNotice,
@@ -28,6 +29,7 @@ import {
   ExpireText,
   ResendButton,
   TestMessage,
+  Spinner
 } from "./styled";
 import OrdersPage from "../OrderPage";
 
@@ -39,12 +41,12 @@ const SignInForm = ({ setData, setCurrentState }) => {
   const [signInMethod, setSignInMethod] = useState("email");
   const [inputValue, setInputValue] = useState("");
 
-  const {currentStep, setCurrentStep} = useStateChange()
-  // const [currentStep, setCurrentStep] = useState("SIGN_IN"); // SIGN_IN or VERIFY
+  const { currentStep, setCurrentStep } = useStateChange();
   const [message, setMessage] = useState("");
   const [timer, setTimer] = useState(""); // seconds (10 mins)
   const [orders, setOrders] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
+  const [loading,setLoding] = useState(false)
 
   useEffect(() => {
     if (currentStep === "VERIFY" && timer > 0) {
@@ -57,8 +59,10 @@ const SignInForm = ({ setData, setCurrentState }) => {
 
   const handleSignIn = async () => {
     if (!inputValue) return;
-
+    setLoding(true)
     try {
+      localStorage.setItem("email",inputValue)
+      setLoding(true)
       const url =
         "https://b0g5qyg9y1.execute-api.us-east-1.amazonaws.com/dev/customer";
       const response = await fetch(url, {
@@ -82,9 +86,10 @@ const SignInForm = ({ setData, setCurrentState }) => {
         const secondsLeft = Math.floor((data.expiryTime - Date.now()) / 1000);
         setTimer(secondsLeft); // ⏱ initialize countdown
       }
-      if (data.message === "No customer associated with this email") {
+      setLoding(false)
+      if (data.message === "No customer associated with this identifier") {
         setMessage(data.message);
-      } else if (data.message === "No orders found for this email") {
+      } else if (data.message === "No orders found for this identifier") {
         setMessage(data.message);
       } else {
         setOrders(data);
@@ -92,19 +97,8 @@ const SignInForm = ({ setData, setCurrentState }) => {
       }
     } catch (error) {
       console.error("API call failed:", error);
+      setLoding(false)
     }
-
-    // if (signInMethod === "email" && !inputValue.includes("@")) return;
-    // if (signInMethod === "sms" && !/^\+?\d{10,}$/.test(inputValue)) return;
-
-    // setData((prev) => ({
-    //   ...prev,
-    //   signInMethod,
-    //   signInValue: inputValue,
-    // }));
-
-    // // Go to verification step
-    // setCurrentStep("VERIFY");
   };
 
   const formatTime = (seconds) => {
@@ -134,7 +128,6 @@ const SignInForm = ({ setData, setCurrentState }) => {
 
         const data = await response.json();
 
-
         if (!response.ok) {
           throw new Error(data.error || "Verification failed");
         }
@@ -142,9 +135,9 @@ const SignInForm = ({ setData, setCurrentState }) => {
         if (data.verified) {
           // setOrders(data.orders || []); // backend should send orders
           setCurrentStep("ORDERS"); // ✅ move to next step
-          localStorage.setItem("token", data.token)
+          localStorage.setItem("token", data.token);
           setInputValue("");
-          setVerificationCode("")
+          setVerificationCode("");
         } else {
           setMessage("Invalid code. Try again.");
         }
@@ -155,8 +148,34 @@ const SignInForm = ({ setData, setCurrentState }) => {
     }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     console.log("codesend it again");
+    try {
+      const url =
+        "https://b0g5qyg9y1.execute-api.us-east-1.amazonaws.com/dev/reSendOTP";
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          email: inputValue,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      log("api data", data);
+      if (data.expiryTime) {
+        const secondsLeft = Math.floor((data.expiryTime - Date.now()) / 1000);
+        setTimer(secondsLeft); // ⏱ initialize countdown
+      }
+    } catch (error) {
+      console.error("API call failed:", error);
+    }
   };
 
   const startChatSendMessage = (option) => {
@@ -241,8 +260,8 @@ const SignInForm = ({ setData, setCurrentState }) => {
                 Send us a message
               </span>
             </HelpText>
-            <SignInButton onClick={handleSignIn} primaryColor={primaryColor}>
-              Sign In
+            <SignInButton onClick={handleSignIn} primaryColor={primaryColor} disabled={loading}>
+              {loading ? <Spinner /> : "Sign In"}
             </SignInButton>
           </SignInContent>
         </>
@@ -303,14 +322,14 @@ const SignInForm = ({ setData, setCurrentState }) => {
               onClick={handleResend}
               disabled={timer > 0}
             >
-              Resend Code
+              Resend
             </SignInButton>
           </VerificationContainer>
         </>
       )}
 
       {currentStep === "ORDERS" && (
-        <OrdersPage orders={orders}  setCurrentState={setCurrentState} />
+        <OrdersPage setCurrentState={setCurrentState} />
       )}
     </SignInContainer>
   );
