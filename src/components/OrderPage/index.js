@@ -39,8 +39,10 @@ import {
 } from "./styled";
 
 const { log } = genLogger("OrderPage");
+import {  useChatContext } from "../../providers/ChatContext";
 
-const OrdersPage = ({ setCurrentState }) => {
+const OrdersPage = () => {
+  const {setCurrentState} = useChatContext();
   const { primaryColor } = useAppConfig();
   const { setCurrentStep } = useStateChange();
   const [reportButtonToggle, setReportButtonToggle] = useState(false);
@@ -85,6 +87,7 @@ const OrdersPage = ({ setCurrentState }) => {
   const logoutHandler = () => {
     localStorage.removeItem("token");
     setCurrentState(chatWithFormStates.FORM);
+    setCurrentStep("SIGN_IN")
   };
 
   const helpOptions = [

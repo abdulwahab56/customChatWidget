@@ -1,4 +1,4 @@
-import React, { createRef, useRef, useState, useContext } from "react";
+import React, { createRef, useRef, useState, useContext, useEffect } from "react";
 import { useAppConfig } from "../../providers/AppConfigProvider";
 import {
   device,
@@ -19,12 +19,13 @@ import {
 import { GrSend } from "react-icons/gr";
 import { FaGreaterThan } from "react-icons/fa6";
 import { genLogger } from "../../lib/logger";
-
+import { useChatContext } from "../../providers/ChatContext";
 import { useStateChange } from "../../providers/StateChangeProvider";
 const name = loggerNames.containers.CHAT_FORM;
 const { log } = genLogger(name);
 
-const ChatForm = ({ setData, setCurrentState }) => {
+const ChatForm = () => {
+  const {setData, setCurrentState} = useChatContext()
   log(">>> Init");
   const {
     primaryColor,
@@ -55,21 +56,55 @@ const ChatForm = ({ setData, setCurrentState }) => {
 
   setCurrentState(chatWithFormStates.CHAT_WIDGET);
 };
-  const signINOPen = () => {
+
+const getToken = () => {
   const token = localStorage.getItem("token");
-  log("click signin button")
-  if(token){
-    log("click signin button token")
-    // setCurrentStep("ORDERS")
+  if (!token || token === "null" || token === "undefined" || token.trim() === "") {
+    return null;
+  }
+  return token;
+};
+
+
+
+const signINOPen = () => {
+  const token = getToken();
+  if (token) {
+    log("Click signin button -> go to ORDERS");
     setCurrentState(chatWithFormStates.ORDERS);
-  }else{
-    // setCurrentStep("SIGN_IN")
+  } else {
+    log("Click signin button -> go to SIGN_IN");
     setCurrentState(chatWithFormStates.SIGN_IN);
   }
-  
+};
 
-  }
 
+
+  // Handle sign-in form submission
+  // const handleSignIn = () => {
+  //   if (signInMethod === "email" && !inputValue.includes("@")) {
+  //     log("Invalid email format");
+  //     return; // Basic validation
+  //   } else if (signInMethod === "sms" && !/^\+?\d{10,}$/.test(inputValue)) {
+  //     log("Invalid phone number format");
+  //     return; // Basic validation
+  //   }
+  //   log("Sign in with:", signInMethod, inputValue);
+  //   setData((prev) => ({
+  //     ...prev,
+  //     signInMethod,
+  //     signInValue: inputValue,
+  //   }));
+  //   setCurrentState(chatWithFormStates.CHAT_WIDGET); // Proceed to chat after sign-in
+  // };
+
+  // Sample help desk options
+  // const helpOptions = [
+  //   "What is your Return Policy?",
+  //   "Ways to Administer Ruff Greens",
+  //   "What ingredients are in Ruff Greens?",
+  //   "How much should I give my pet?",
+  // ];
  const helpOptions = [
   { id: 1, text: "What is your Return Policy?", hide: true },
   { id: 2, text: "Ways to Administer Ruff Greens", hide: true },
@@ -79,6 +114,7 @@ const ChatForm = ({ setData, setCurrentState }) => {
 
 
   return (
+    
     <FormSection device={device}>
       <FormHeader primaryColor={primaryColor} device={device}>
         <h3 className="preChatForm-welcome-text">{description}</h3>

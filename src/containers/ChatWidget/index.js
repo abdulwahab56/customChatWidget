@@ -13,17 +13,20 @@ import {
 } from "../../constants";
 import { ChatContainer, ChatWrapper } from "./styled";
 import { genLogger } from "../../lib/logger";
+import { useChatContext } from "../../providers/ChatContext";
 
 const name = loggerNames.containers.CHAT_WIDGET;
 const { log, error, trace, info } = genLogger(name);
 
-const ChatWidget = ({
-  dataFromInputForm = {},
-  setCurrentState = () => log("No Function"),
-  setWidgetIsOpen,
-  widgetIsOpen,
-}) => {
+const ChatWidget = () => {
   log(">>> Init");
+    const {
+    data: dataFromInputForm,
+    currentState,
+    setCurrentState,
+    widgetIsOpen,
+    setWidgetIsOpen,
+  } = useChatContext();
   const [loading, setLoading] = useState(true);
   const [chatInitialized, setChatInitialized] = useState(false);
   const [toggleToForm, setToggleToForm] = useState(false);

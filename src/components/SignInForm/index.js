@@ -32,11 +32,13 @@ import {
   Spinner
 } from "./styled";
 import OrdersPage from "../OrderPage";
+import {  useChatContext } from "../../providers/ChatContext";
 
 const name = "SignInForm";
 const { log } = genLogger(name);
 
-const SignInForm = ({ setData, setCurrentState }) => {
+const SignInForm = () => {
+  const {setData, setCurrentState} = useChatContext()
   const { primaryColor } = useAppConfig();
   const [signInMethod, setSignInMethod] = useState("email");
   const [inputValue, setInputValue] = useState("");
@@ -47,6 +49,7 @@ const SignInForm = ({ setData, setCurrentState }) => {
   const [orders, setOrders] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const [loading,setLoding] = useState(false)
+
 
   useEffect(() => {
     if (currentStep === "VERIFY" && timer > 0) {
@@ -134,10 +137,11 @@ const SignInForm = ({ setData, setCurrentState }) => {
         log("api data", data);
         if (data.verified) {
           // setOrders(data.orders || []); // backend should send orders
-          setCurrentStep("ORDERS"); // ✅ move to next step
+          // setCurrentStep("ORDERS"); 
+          setCurrentState(chatWithFormStates.ORDERS)
           localStorage.setItem("token", data.token);
-          setInputValue("");
-          setVerificationCode("");
+          // setInputValue("");
+          // setVerificationCode("");
         } else {
           setMessage("Invalid code. Try again.");
         }
@@ -328,9 +332,9 @@ const SignInForm = ({ setData, setCurrentState }) => {
         </>
       )}
 
-      {currentStep === "ORDERS" && (
-        <OrdersPage setCurrentState={setCurrentState} />
-      )}
+      {/* {currentStep === "ORDERS" && (
+        <OrdersPage />
+      )} */}
     </SignInContainer>
   );
 };
