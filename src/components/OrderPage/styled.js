@@ -209,17 +209,22 @@ export const ProductPrice = styled.div`
 
 export const Footer = styled.div`
   position: fixed;
-  bottom: 85px;
-  right: 80px;
+  bottom: 80px;
+  right: 31px;
   background-color: rgb(255, 255, 255);
   box-shadow: rgba(0, 0, 0, 0.09) 0px -4px 4px, rgba(0, 0, 0, 0.1) 0px 1px 2px, rgba(0, 0, 0, 0.16) 0px 1px 3px;
   padding: 6px;
-  width: 368px;
+  width: 308px;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  @media ${(props) => props.device.laptop} {
+        width: 367px;
+        bottom: 85px;
+        right: 80px;
+  }
 `;
 
 export const HelpText = styled.span`
@@ -230,7 +235,6 @@ export const HelpText = styled.span`
 
 export const MessageButton = styled.button`
   background: #004d25;
-  margin-left: 85px;
   color: #fff;
   border: none;
   padding: 10px 18px;

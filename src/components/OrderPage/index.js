@@ -207,7 +207,7 @@ const OrdersPage = () => {
                 
               </PageWrapper>
 
-              <Footer>
+              <Footer device={device}>
                 <HelpText>Need more help?</HelpText>
                 <MessageButton>Send Us A Message</MessageButton>
               </Footer>
